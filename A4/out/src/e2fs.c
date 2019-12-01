@@ -128,17 +128,15 @@ return -1;
 }
 
 /**
- * Navigates i to point to the directory named dirname, inside the directory of i.
+ * *inode_pt must point to an inode of a directory.
  * 
- * *i must point to an inode of a directory.
- * 
- * Returns 0 on success, ENOENT if dirname does not exist or is not a directory.
+ * Returns 0 on success, ENOENT if name does not exist.
  */
-int go_to(inode_t **inode_pt, char* dirname)
+int go_to(inode_t **inode_pt, char* name)
 {
     inode_t* inode = *inode_pt;
     dir_entry_t* entry;
-    int dirname_length = strlen(dirname);
+    int name_len = strlen(name);
     for (int i = 0; i < 1; i++)
     {
         int dir_entry_block_index = inode->i_block[i];
@@ -147,22 +145,14 @@ int go_to(inode_t **inode_pt, char* dirname)
         unsigned int marker = 0;
         while (marker<EXT2_BLOCK_SIZE){
             entry = (dir_entry_t *)(disk + dir_entry_block_index * EXT2_BLOCK_SIZE + marker);
-            printf("%d: %.*s              %d\n", entry->inode,entry->name_len, entry->name, entry->file_type);
-            if (dirname_length==entry->name_len && strncmp(dirname,entry->name,dirname_length)==0){
-                if (entry->file_type == EXT2_FT_DIR){
-                    *inode_pt =  inode_table + (entry->inode -1);
-                    return 0;
-                }else{
-                    return ENOENT;
-                }
+            if (name_len==entry->name_len && strncmp(name,entry->name,name_len)==0){
+                *inode_pt =  inode_table + (entry->inode -1);
+                return 0;
             }
             marker+= entry->rec_len;
         }
-
     }
     
-    
-
     return ENOENT;
 }
 
