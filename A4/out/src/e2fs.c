@@ -156,6 +156,10 @@ int go_to(inode_t **inode_pt, char* name)
     return ENOENT;
 }
 
+int is_fmode_type(unsigned short mode, unsigned short type){
+    return mode>>12==type>>12 ? 0 : 1;
+}
+
 void print_error(int errnum, const char *origin, const char *extra)
 {
     if (origin)
@@ -165,16 +169,17 @@ void print_error(int errnum, const char *origin, const char *extra)
     switch (errnum)
     {
     case ENOENT:
-        fprintf(stderr, ": No such file or directory. ");
+        fprintf(stderr, ": No such directory entry. ");
         break;
     case EEXIST:
-        fprintf(stderr, " already exists. ");
+        fprintf(stderr, ": Entry already exists. ");
         break;
     default:
         fprintf(stderr, ": unknown error. ");
     }
     if (extra)
     {
-        fprintf(stderr, "%s. \n", extra);
+        fprintf(stderr, "%s. ", extra);
     }
+    fprintf(stderr,"\n");
 }

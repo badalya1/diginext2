@@ -73,5 +73,11 @@ int get_available_inode();
 
 int go_to(inode_t **inode, char* dirname);
 
+/**
+ * The type indicator occupies the top hex digit (bits 15 to 12) of `mode`s 16-bit field
+ * Return 0 if `mode` is of type `type`, 1 otherwise.
+ */
+int is_fmode_type(unsigned short mode, unsigned short type);
+
 void print_error(int errnum, const char* origin,const char* extra);
 #endif
