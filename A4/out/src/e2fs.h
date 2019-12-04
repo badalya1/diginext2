@@ -71,7 +71,38 @@ inode_t* get_inode(int inode_index);
  */
 int get_available_inode();
 
-int go_to(inode_t **inode, char* dirname);
+/**
+ * Set n'th  bit to one on the inode bitmap. 
+ */
+void mark_inode_used(int n);
+
+/**
+ * Return next available block index. Return -1 if all blocks are taken
+ */
+int get_available_block();
+
+/**
+ * Set n'th  bit to one on the block bitmap. 
+ */
+void mark_block_used(int n);
+
+/**
+ * Return the record length in bytes given the name_len 
+ */
+int get_rec_len(int name_len);
+
+/**
+ * *inode_pt must point to an inode of a directory.
+ * 
+ * Returns 0 on success, ENOENT if name does not exist.
+ */
+int go_to(inode_t **inode_pt,unsigned int* inode_number,  char* name);
+
+/**
+ * Insert directory entries into the first available block.
+ * Return 0 on sucess, -1 otherwise
+ */
+int insert_dir_entry(dir_entry_t* entry, inode_t* inode, const char* name);
 
 /**
  * The type indicator occupies the top hex digit (bits 15 to 12) of `mode`s 16-bit field
