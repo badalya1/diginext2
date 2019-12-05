@@ -218,15 +218,15 @@ int insert_dir_entry(dir_entry_t *entry, inode_t *inode, const char *name)
 
 	if (which_block == -1)
 	{
-		dir_entry_block_index = get_available_block();
-		if (dir_entry_block_index==-1){
+		dir_entry_block_index = get_available_block()+1;
+		if (dir_entry_block_index==0){
 				print_error(-1, name, "A new block is required but all blocks are taken");
 				return -1;
 			}
 		inode->i_block[which_block+1] = dir_entry_block_index;
 		inode->i_blocks+=2;
 		inode->i_size+=EXT2_BLOCK_SIZE;
-		mark_block_used(dir_entry_block_index);
+		mark_block_used(dir_entry_block_index-1);
 		marker = 0;
 		backtrack = EXT2_BLOCK_SIZE;
 	}

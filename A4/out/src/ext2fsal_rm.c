@@ -83,7 +83,7 @@ int32_t ext2_fsal_rm(const char *path)
             }
         }
         dir->i_dtime = (unsigned int)time(NULL);
-        mark_inode_unused(walker_inode-1);
+        mark_inode_unused(walker_inode - 1);
     }
 
     //Remove Direntry from walker
@@ -106,11 +106,19 @@ int32_t ext2_fsal_rm(const char *path)
             entry = (dir_entry_t *)(disk + dir_entry_block_index * EXT2_BLOCK_SIZE + marker);
             if (entry->inode != 0 && name_len == entry->name_len && strncmp(file_node->name, entry->name, name_len) == 0)
             {
-                break;
+                if (prev_entry == NULL)
+                {
+                    mark_block_unused(dir_entry_block_index);
+                    walker->i_block[i] = 0;
+                }
+                else
+                {
+                    prev_entry->rec_len += entry->rec_len;
+                }
+                
             }
             marker += entry->rec_len;
         }
-        prev_entry->rec_len += entry->rec_len;
     }
 
     free_bc(bc);
