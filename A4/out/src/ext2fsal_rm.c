@@ -57,7 +57,7 @@ int32_t ext2_fsal_rm(const char *path)
     }
 
     inode_t *dir = walker;
-    if (go_to(&dir, NULL, file_node->name))
+    if (go_to(&dir, &walker_inode, file_node->name))
     { //File doesnt exist
         print_error(ENOENT, file_node->name, NULL);
         return ENOENT;
@@ -83,6 +83,7 @@ int32_t ext2_fsal_rm(const char *path)
             }
         }
         dir->i_dtime = (unsigned int)time(NULL);
+        mark_inode_unused(walker_inode-1);
     }
 
     //Remove Direntry from walker

@@ -91,6 +91,7 @@ int32_t ext2_fsal_mkdir(const char *path)
 		dir->i_atime = (unsigned int)time(NULL);
 		dir->i_ctime = (unsigned int)time(NULL);
 		dir->i_mtime = (unsigned int)time(NULL);
+		dir->i_dtime = 0;
 		dir->i_gid = 0;
 		dir->i_links_count = 0;
 		dir->i_blocks = 0;
