@@ -59,9 +59,9 @@ int32_t ext2_fsal_mkdir(const char *path)
 	}
 
 	inode_t *dir = walker;
-	if (go_to(&dir, &walker_inode, name_node->name)==0)
+	if (go_to(&dir, NULL, name_node->name)==0)
 	{
-		if (~is_fmode_type(dir->i_mode, EXT2_S_IFDIR))
+		if (!is_fmode_type(dir->i_mode, EXT2_S_IFDIR))
 		{
 			print_error(EEXIST, name_node->name, NULL);
 			return EEXIST;
@@ -124,8 +124,9 @@ int32_t ext2_fsal_mkdir(const char *path)
 		parent.name_len = 2;
 		parent.file_type = EXT2_FT_DIR;
 		parent.rec_len = get_rec_len(dir_entry.name_len);
-
 		insert_dir_entry(&parent, dir, "..");
 
+		free_bc(bc);
+		free(name_node);
 		return 0;
 	}

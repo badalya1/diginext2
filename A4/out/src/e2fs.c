@@ -130,7 +130,12 @@ int get_available_inode()
 void mark_inode_used(int n)
 {
 	unsigned char *byte = inode_bitmap + n / 8;
-	*byte = *byte | (1 << (n % 8));
+	*byte |= (1 << (n % 8));
+}
+
+void mark_inode_unused(int n){
+	unsigned char *byte = inode_bitmap + n / 8;
+	*byte &= ~(1 << (n % 8));
 }
 
 int get_available_block()
@@ -150,9 +155,14 @@ int get_available_block()
 void mark_block_used(int n)
 {
 	unsigned char *byte = block_bitmap + n / 8;
-	*byte = *byte | (1 << (n % 8));
+	*byte |= (1 << (n % 8));
 }
 
+void mark_block_unused(int n)
+{
+	unsigned char *byte = block_bitmap + n / 8;
+	*byte &= ~(1 << (n % 8));
+}
 int get_rec_len(int name_len)
 {
 	int total = sizeof(dir_entry_t) + name_len;
@@ -184,7 +194,9 @@ int go_to(inode_t **inode_pt,unsigned int* inode_number, char *name)
 			if (entry->inode != 0 && name_len == entry->name_len && strncmp(name, entry->name, name_len) == 0)
 			{
 				*inode_pt = inode_table + (entry->inode - 1);
+				if(inode_number!=NULL){
 				*inode_number = entry->inode;
+				}
 				return 0;
 			}
 			marker += entry->rec_len;
@@ -279,6 +291,9 @@ void print_error(int errnum, const char *origin, const char *extra)
 		break;
 	case EEXIST:
 		fprintf(stderr, " Entry already exists. ");
+		break;
+	case EISDIR:
+		fprintf(stderr, " Expected a file, but got a directory. ");
 		break;
 	default:
 		fprintf(stderr, " unknown error. ");

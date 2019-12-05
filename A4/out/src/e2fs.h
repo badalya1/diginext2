@@ -77,6 +77,11 @@ int get_available_inode();
 void mark_inode_used(int n);
 
 /**
+ * Set n'th  bit to zero on the inode bitmap. 
+ */
+void mark_inode_unused(int n);
+
+/**
  * Return next available block index. Return -1 if all blocks are taken
  */
 int get_available_block();
@@ -85,6 +90,11 @@ int get_available_block();
  * Set n'th  bit to one on the block bitmap. 
  */
 void mark_block_used(int n);
+
+/**
+ * Set n'th  bit to zero on the block bitmap. 
+ */
+void mark_block_unused(int n);
 
 /**
  * Return the record length in bytes given the name_len 
